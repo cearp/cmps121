@@ -2,9 +2,6 @@ package com.dealfaro.luca.clicker;
 
 import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by Alex on 4/30/2015.
- */
 public class repJson {
     @SerializedName("msg")
     String msg;

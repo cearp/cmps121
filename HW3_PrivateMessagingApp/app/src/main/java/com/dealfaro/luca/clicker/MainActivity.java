@@ -26,7 +26,6 @@ import com.google.gson.Gson;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,9 +53,11 @@ public class MainActivity extends ActionBarActivity {
     private static final float GOOD_ACCURACY_METERS = 100;
 
     // This is an id for my app, to keep the key space separate from other apps.
-    private static final String MY_APP_ID = "aovallad_bboard";
+    private AppInfo appInfo;
+    private static String MY_APP_ID = "cearp4456341635";
 
-    private static final String SERVER_URL_PREFIX = "https://luca-teaching.appspot.com/store/default/";
+
+    private static final String SERVER_URL_PREFIX = "https://hw3n-dot-luca-teaching.appspot.com/store/default/";
 
     //To remember the favorite account
     public static final String PREF_ACCOUNT = "pref_account";
@@ -66,7 +67,6 @@ public class MainActivity extends ActionBarActivity {
 
     // Uploader.
     private ServerCall uploader;
-
     // Remember whether we have already successfully checked in.
     private boolean checkinSuccessful = false;
 
@@ -115,39 +115,11 @@ public class MainActivity extends ActionBarActivity {
             TextView tvTs = (TextView) newView.findViewById(R.id.itemTs);
             tvMsg.setText(w.msg);
             tvTs.setText(w.ts);
-
-            // Sets a listener for the button, and a tag for the button as well.
-            /*b.setTag(new Integer(position));
-            b.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    // Reacts to a button press.
-                    // Gets the integer tag of the button.
-                    String s = v.getTag().toString();
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, s, duration);
-                    toast.show();
-                }
-            });*/
-
-            // Set a listener for the whole list item.
-            /*newView.setTag(w.textLabel);
-            newView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    String s = v.getTag().toString();
-                    int duration = Toast.LENGTH_SHORT;
-                    Toast toast = Toast.makeText(context, s, duration);
-                    toast.show();
-                }
-            });*/
-
             return newView;
         }
     }
 
     private MyAdapter aa;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -158,8 +130,10 @@ public class MainActivity extends ActionBarActivity {
         ListView myListView = (ListView) findViewById(R.id.listView);
         myListView.setAdapter(aa);
         aa.notifyDataSetChanged();
-
-        noSpin();
+        //creates the singleton object
+        appInfo = AppInfo.getInstance(this);
+        MY_APP_ID = appInfo.toString();
+        spinOff();
 
         Log.v(TAG, "Initialized properly");
 
@@ -236,18 +210,18 @@ public class MainActivity extends ActionBarActivity {
     };
 
     public void clickButton(View v) {
-        spin();
+        spinOn();
         // Get the text we want to send.
         EditText et = (EditText) findViewById(R.id.editText);
         String msg = et.getText().toString();
 
         et.setText(null);
 
-        spin();
+        spinOn();
 
         String lat = "" + latitude;
         String lng = "" + longitude;
-
+        String randID = "8as4da22da1";
         // Then, we start the call.
         PostMessageSpec myCallSpec = new PostMessageSpec();
 
@@ -260,7 +234,7 @@ public class MainActivity extends ActionBarActivity {
         m.put("msg", msg);
         m.put("lat", lat);
         m.put("lng", lng);
-        m.put("app_id", MY_APP_ID);
+        m.put("app_id", randID);
 
         myCallSpec.setParams(m);
         // Actual server call.
@@ -307,7 +281,7 @@ public class MainActivity extends ActionBarActivity {
                 EditText et = (EditText) findViewById(R.id.editText);
                 et.setText("");
             }
-            noSpin();
+            spinOff();
         }
     }
 
@@ -316,8 +290,7 @@ public class MainActivity extends ActionBarActivity {
         MessageList ml = gson.fromJson(result, MessageList.class);
         // Fills aList, so we can fill the listView.
         aList.clear();
-        SimpleDateFormat  date = new SimpleDateFormat("MM-cc");
-
+        //SimpleDateFormat  date = new SimpleDateFormat("MM-cc");
         for (int i = 0; i < ml.messages.length; i++) {
             repJson m = ml.messages[i];
             String msg = m.getMsg();
@@ -361,7 +334,7 @@ public class MainActivity extends ActionBarActivity {
 
     public void refreshButton(View v) {
         GetMessageSpec myCallSpec = new GetMessageSpec();
-        spin();
+        spinOn();
 
         myCallSpec.url = SERVER_URL_PREFIX + "get_local";
         myCallSpec.context = MainActivity.this;
@@ -426,14 +399,12 @@ public class MainActivity extends ActionBarActivity {
         uploader = new ServerCall();
         uploader.execute(myCallSpec);
     }
-
-    private void spin() {
-        //set it to visible
+    //spinner from hw2 reviews + piazza
+    private void spinOn() {
         ProgressBar spinner = (ProgressBar) findViewById(R.id.progressBar);
         spinner.setVisibility(View.VISIBLE);
     }
-    private void noSpin() {
-        //set it to invisible
+    private void spinOff() {
         ProgressBar spinner = (ProgressBar) findViewById(R.id.progressBar);
         spinner.setVisibility(View.INVISIBLE);
     }
@@ -453,7 +424,7 @@ public class MainActivity extends ActionBarActivity {
                 editor.putString(PREF_POSTS, result);
                 editor.commit();
             }
-            noSpin();
+            spinOff();
         }
     }
 

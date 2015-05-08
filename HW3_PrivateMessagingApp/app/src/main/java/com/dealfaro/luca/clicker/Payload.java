@@ -1,8 +1,5 @@
 package com.dealfaro.luca.clicker;
 
-/**
- * Created by luca on 3/4/2015.
- */
 public class Payload {
 
     public Payload() {}
